@@ -1,0 +1,26 @@
+{
+    "name": "game-darts-credits",
+    "version": "1.0.0",
+    "description": "JPUniversity Arena",
+    "private": true,
+    "dependencies": {
+        "css-loader": "^2.1.0",
+        "cssnano": "^4.1.8",
+        "extract-text-webpack-plugin": "^4.0.0-beta.0",
+        "file-loader": "^3.0.1",
+        "mini-css-extract-plugin": "^0.5.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.1",
+        "style-loader": "^0.23.1",
+        "webpack": "^4.29.0",
+        "webpack-cli": "^3.2.1",
+        "webpack-concat-plugin": "^3.0.0"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack"
+    },
+    "keywords": {},
+    "author": "",
+    "license": "ISC"
+}
