@@ -18,8 +18,18 @@ var MainScene = {
         this.group = this.game.add.group();
 
         // bg
-        let bg = newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
-        
+        newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
+        newSprite(`title`, CANVAS_WIDTH / 2, 480, 0.5, 0, 1, 1, -1, this.group, this.game);
+        newSprite(`gamii_logo`, CANVAS_WIDTH / 2, 1600, 0.5, 0, 1, 1, -1, this.group, this.game);
+        this.btnPlay = newButton("btn_play", CANVAS_WIDTH / 2, 1200, 0.5, 0, 1, 1, 200, this.onClickPlay, this, this.group, this.game);
+
+        this.waitTween = scaleAnim(this.game, this.btnPlay, 0.9, 0.9, 500, () => {
+            scaleAnim(this.game, this.btnPlay, 1, 1, 500, () => {
+                if (this.waitTween)
+                    this.waitTween.start();
+            });
+        });
+
         if (this.game.device.touch)
             this.game.input.mouse.stop();
 
@@ -29,6 +39,10 @@ var MainScene = {
     
     sort: function() {
         this.group.sort('z_order', Phaser.Group.SORT_ASCENDING);
+    },
+
+    onClickPlay: function() {
+        controller.goToScene('GameScene');
     },
 
     onClickReplay: function() {

@@ -28,6 +28,14 @@ var scaleAnim = function(game, sprite, x, y, duration, callback = undefined) {
     return tween;
 }
 
+var opacityAnim = function(game, sprite, value, duration, callback = undefined){
+    let tween = game.add.tween(sprite.opacity).to(value, duration, Phaser.Easing.Linear.None, true);
+    if (callback) {
+        tween.onComplete.add(callback);
+    }
+    return tween;
+}
+
 var convertToNodeSpace = function(pos_x, pos_y, parent) {
     // lc = left_corner
     var pos_lc = {x: parent.worldPosition.x - parent.anchor.x * parent.width, y: parent.worldPosition.y - parent.anchor.y * parent.height};
