@@ -16,7 +16,7 @@ var PreloadScene = {
     },
     
     create: function() {
-        this.game.stage.backgroundColor = '#071e22';
+        this.game.stage.backgroundColor = '#000';
         this.group = this.game.add.group();
         this.lblProgress = newLabel('', 20, 'digital', 'white', CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 0.5, 0.5, 1, 1, 1, this.group, this.game);
 
@@ -32,21 +32,11 @@ var PreloadScene = {
         const IMG_PATH = "./resources/images";
         const SOUND_PATH = "./resources/sounds";
 
-        this.loadImage("board",  	    `${IMG_PATH}/board.png`);
-        this.loadImage("confirm",	    `${IMG_PATH}/confirm.png`);
-        this.loadImage("replay",	    `${IMG_PATH}/replay.png`);
-        this.loadImage("undo",	        `${IMG_PATH}/undo.png`);
-        this.loadImage("switch",	        `${IMG_PATH}/switch.png`);
-        this.loadImage("placeholder",   `${IMG_PATH}/placeholder.png`);
-        this.loadImage("white",		    `${IMG_PATH}/white.png`, true, 108, 108, 4);
-        this.loadImage("black",   	    `${IMG_PATH}/black.png`, true, 108, 108, 4);
-        this.loadImage("dice_1",   	    `${IMG_PATH}/dice_1.png`, true, 116, 116, 2);
-        this.loadImage("dice_2",   	    `${IMG_PATH}/dice_2.png`, true, 116, 116, 2);
-        this.loadImage("dice_3",   	    `${IMG_PATH}/dice_3.png`, true, 116, 116, 2);
-        this.loadImage("dice_4",   	    `${IMG_PATH}/dice_4.png`, true, 116, 116, 2);
-        this.loadImage("dice_5",   	    `${IMG_PATH}/dice_5.png`, true, 116, 116, 2);
-        this.loadImage("dice_6",   	    `${IMG_PATH}/dice_6.png`, true, 116, 116, 2);
-        this.loadImage("dice_anim",   	`${IMG_PATH}/dice_anim.png`, true, 300, 300, 6);
+        this.loadImage("bg",  	    `${IMG_PATH}/bg.jpg`);
+        this.loadImage("btn_play",  	    `${IMG_PATH}/btn_play.png`);
+        this.loadImage("gamii_logo",  	    `${IMG_PATH}/gamii_logo.png`);
+        this.loadImage("title",  	    `${IMG_PATH}/title.png`);
+        // this.loadImage("dice_anim",   	`${IMG_PATH}/dice_anim.png`, true, 300, 300, 6);
 
         var aSoundsInfo = [];
         aSoundsInfo.push({filename: `${SOUND_PATH}/click`, loop: false, volume: 1, ingamename: "click"});
@@ -98,6 +88,6 @@ var PreloadScene = {
     },
     
     loadComplete: function() {
-        controller.goToScene('GameScene');
+        controller.goToScene('MainScene');
     }
 };

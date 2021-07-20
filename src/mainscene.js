@@ -1,8 +1,6 @@
 
-var GameScene = {
+var MainScene = {
     game: controller.game,
-    isGameStarted: false,
-    isSwitchAble: true,
 
     init: function() {
         this.game.renderer.renderSession.roundPixels = true;
@@ -31,10 +29,6 @@ var GameScene = {
     
     sort: function() {
         this.group.sort('z_order', Phaser.Group.SORT_ASCENDING);
-    },
-
-    gameEnd: function(type) {
-        this.isGameStarted = false;
     },
 
     onClickReplay: function() {
