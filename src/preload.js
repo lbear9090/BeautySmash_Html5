@@ -36,6 +36,22 @@ var PreloadScene = {
         this.loadImage("btn_play",  	    `${IMG_PATH}/btn_play.png`);
         this.loadImage("gamii_logo",  	    `${IMG_PATH}/gamii_logo.png`);
         this.loadImage("title",  	    `${IMG_PATH}/title.png`);
+        this.loadImage("point",  	    `${IMG_PATH}/point.png`);
+        this.loadImage("item1",  	    `${IMG_PATH}/items/item_1.png`);
+        this.loadImage("item2",  	    `${IMG_PATH}/items/item_2.png`);
+        this.loadImage("item3",  	    `${IMG_PATH}/items/item_3.png`);
+        this.loadImage("item4",  	    `${IMG_PATH}/items/item_4.png`);
+        this.loadImage("item5",  	    `${IMG_PATH}/items/item_5.png`);
+        this.loadImage("item6",  	    `${IMG_PATH}/items/item_6.png`);
+        this.loadImage("item7",  	    `${IMG_PATH}/items/item_7.png`);
+        this.loadImage("item8",  	    `${IMG_PATH}/items/item_8.png`);
+        this.loadImage("item9",  	    `${IMG_PATH}/items/item_9.png`);
+        this.loadImage("item10",  	    `${IMG_PATH}/items/item_10.png`);
+        this.loadImage("item11",  	    `${IMG_PATH}/items/item_11.png`);
+        this.loadImage("item12",  	    `${IMG_PATH}/items/item_12.png`);
+        this.loadImage("item13",  	    `${IMG_PATH}/items/item_13.png`);
+        this.loadImage("item14",  	    `${IMG_PATH}/items/item_14.png`);
+        this.loadImage("item15",  	    `${IMG_PATH}/items/item_15.png`);
         // this.loadImage("dice_anim",   	`${IMG_PATH}/dice_anim.png`, true, 300, 300, 6);
 
         var aSoundsInfo = [];
