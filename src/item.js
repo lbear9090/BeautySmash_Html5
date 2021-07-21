@@ -4,6 +4,7 @@ function Item(type, index, x, y, z, scene) {
     this.floor = z;
     this.scene = scene;
     this.choosed = false;
+    this.goneBag = false;
 
     let scaleX = 0.8;
     let scaleY = 0.8;
@@ -28,6 +29,15 @@ Item.prototype.destroy = function() {
 Item.prototype.setPosition = function(x, y) {
     this.sprite.x = x;
     this.sprite.y = y;
+}
+
+Item.prototype.gotoBag = function(pos) {
+    opacityAnim(this.scene.game, this.sprite, 0, 500);
+    scaleAnim(this.scene.game, this.sprite, 0.5, 0.5, 500);
+    moveAnim(this.scene.game, this.sprite, pos.x, pos.y, 500, () => {
+        this.goneBag = true;
+        this.scene.checkClear();
+    });
 }
 
 Item.prototype.addAngle = function(angle) {

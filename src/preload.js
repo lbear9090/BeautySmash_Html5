@@ -61,6 +61,7 @@ var PreloadScene = {
         this.loadImage("throw7",  	    `${IMG_PATH}/throw/throw_7.png`);
         this.loadImage("throw8",  	    `${IMG_PATH}/throw/throw_8.png`);
         this.loadImage("throw9",  	    `${IMG_PATH}/throw/throw_9.png`);
+        this.loadImage("bag",  	    `${IMG_PATH}/shopping_bag.png`);
         // this.loadImage("dice_anim",   	`${IMG_PATH}/dice_anim.png`, true, 300, 300, 6);
 
         var aSoundsInfo = [];

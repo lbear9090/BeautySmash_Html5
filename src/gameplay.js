@@ -40,23 +40,20 @@ var GameScene = {
         this.pointLayer.y = 600;
 
         this.itemLayer = this.game.add.group();
+        this.itemLayer.alpha = 0;
 
         if (this.game.device.touch)
             this.game.input.mouse.stop();
 
         this.createItems();
         
-        // this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, 3000).loop(true);
-
-
         this.card = newSprite(`throw1`, CANVAS_WIDTH/2, 1600, 0.5, 0.5, 0.8, 0.8, 2, this.itemLayer, this.game);
 
         this.game.input.onUp.add( () => {
-            if(!this.isThrown && this.bObjCreated){
-                this.throwCard();
-            }
+            this.throwCard();
         });
       
+        this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.itemLayer, this.game);
         // sort
         this.sort();
     },
@@ -73,12 +70,10 @@ var GameScene = {
             this.points = [];
         }
 
-        this.itemLayer.alpha = 0;
-
         this.pointLayer.alpha = 0;
         this.pointLayer.scale.x = 0.1;
         this.pointLayer.scale.y = 0.1;
-        this.pointLayer.angle = 0;
+        this.pointLayer.angle = 180;
 
         let pos = this.mainpos[Math.floor(Math.random()*5)];
         
@@ -91,14 +86,17 @@ var GameScene = {
         scaleAnim(this.game, this.pointLayer, 1, 1, 500);
         opacityAnim(this.game, this.pointLayer, 1, 500);
         rotateAnim(this.game, this.pointLayer, 0, 500, () => {
+            opacityAnim(this.game, this.itemLayer, 1, 500);
             this.bObjCreated = true;
             this.startRotate();
-            this.itemLayer.alpha = 1;
         });
+
+        this.sort();
     },
     
     startRotate: function() {
-        console.log("rotate start");
+        // this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, 3000).loop(true);
+
         this.rotateTween = rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
             rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
                 if (this.rotateTween)
@@ -116,19 +114,22 @@ var GameScene = {
     },
 
     throwCard: function(){
+        if(this.isThrown || !this.bObjCreated || this.checkAllChoose()){
+            return;
+        }
+
         this.isThrown = true;
         rotateAnimEase(this.game, this.card, 360, 300);
         moveAnim(this.game, this.card, CANVAS_WIDTH/2, -100, 300, () => {
             this.card.y = 1600;
             this.isThrown = false;
-            this.checkClear();
         });
     },
 
     checkClear: function(){
         var bCleared = true;
         for(i = 0; i < this.items.length; i++){
-            if(!this.items[i].choosed){
+            if(!this.items[i].goneBag){
                 bCleared = false;
             }
         }
@@ -138,8 +139,10 @@ var GameScene = {
             
             this.rotateTween.stop();
             this.rotateTween = null;
-            this.itemLayer.alpha = 0;
             this.game.tweens.removeAll();
+            
+            opacityAnim(this.game, this.itemLayer, 0, 500);
+
             scaleAnim(this.game, this.pointLayer, 0.1, 0.1, 500);
             opacityAnim(this.game, this.pointLayer, 0, 500);
             rotateAnim(this.game, this.pointLayer, this.pointLayer.angle + 180, 500, () => {
@@ -147,6 +150,17 @@ var GameScene = {
             });
         }
     },
+
+    checkAllChoose: function(){
+        var bChoose = true;
+        for(i = 0; i < this.items.length; i++){
+            if(!this.items[i].choosed){
+                bChoose = false;
+            }
+        }
+        return bChoose;
+    },
+
     onClickReplay: function() {
         window.location.reload();
     },
@@ -154,13 +168,15 @@ var GameScene = {
     update: function() {
         if(this.bObjCreated){
             for(i = 0; i < this.points.length; i++){
-                this.items[i].setPosition(this.points[i].world.x, this.points[i].world.y);
-                if(this.isThrown && !this.items[i].choosed){
-                    if(Phaser.Math.distance(this.items[i].sprite.x, this.items[i].sprite.y, this.card.position.x, this.card.position.y) < 150){
-                        this.items[i].choosed = true;
-                        this.items[i].sprite.visible = false;
+                if(!this.items[i].choosed){
+                    this.items[i].setPosition(this.points[i].world.x, this.points[i].world.y);
+                    if(this.isThrown){
+                        if(Phaser.Math.distance(this.items[i].sprite.x, this.items[i].sprite.y, this.card.position.x, this.card.position.y) < 150){
+                            this.items[i].choosed = true;
+                            this.items[i].gotoBag(this.bag.position);
+                        }
                     }
-                }
+                }                
             }
         }
     }
