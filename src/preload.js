@@ -52,6 +52,15 @@ var PreloadScene = {
         this.loadImage("item13",  	    `${IMG_PATH}/items/item_13.png`);
         this.loadImage("item14",  	    `${IMG_PATH}/items/item_14.png`);
         this.loadImage("item15",  	    `${IMG_PATH}/items/item_15.png`);
+        this.loadImage("throw1",  	    `${IMG_PATH}/throw/throw_1.png`);
+        this.loadImage("throw2",  	    `${IMG_PATH}/throw/throw_2.png`);
+        this.loadImage("throw3",  	    `${IMG_PATH}/throw/throw_3.png`);
+        this.loadImage("throw4",  	    `${IMG_PATH}/throw/throw_4.png`);
+        this.loadImage("throw5",  	    `${IMG_PATH}/throw/throw_5.png`);
+        this.loadImage("throw6",  	    `${IMG_PATH}/throw/throw_6.png`);
+        this.loadImage("throw7",  	    `${IMG_PATH}/throw/throw_7.png`);
+        this.loadImage("throw8",  	    `${IMG_PATH}/throw/throw_8.png`);
+        this.loadImage("throw9",  	    `${IMG_PATH}/throw/throw_9.png`);
         // this.loadImage("dice_anim",   	`${IMG_PATH}/dice_anim.png`, true, 300, 300, 6);
 
         var aSoundsInfo = [];

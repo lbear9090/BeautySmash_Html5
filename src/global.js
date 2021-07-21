@@ -4,6 +4,14 @@ const CANVAS_HEIGHT = 1920;
 var s_aSounds;
 var s_bIsIphone = false;
 
+var rotateAnimEase = function(game, sprite, value, duration, callback = undefined) {
+    let tween = game.add.tween(sprite).to({angle: value}, duration, Phaser.Easing.Quadratic.InOut, true);
+    if (callback) {
+        tween.onComplete.add(callback);
+    }
+    return tween;
+}
+
 var rotateAnim = function(game, sprite, value, duration, callback = undefined) {
     let tween = game.add.tween(sprite).to({angle: value}, duration, Phaser.Easing.Linear.None, true);
     if (callback) {
@@ -29,7 +37,7 @@ var scaleAnim = function(game, sprite, x, y, duration, callback = undefined) {
 }
 
 var opacityAnim = function(game, sprite, value, duration, callback = undefined){
-    let tween = game.add.tween(sprite.opacity).to(value, duration, Phaser.Easing.Linear.None, true);
+    let tween = game.add.tween(sprite).to({alpha: value}, duration, Phaser.Easing.Linear.None, true);
     if (callback) {
         tween.onComplete.add(callback);
     }

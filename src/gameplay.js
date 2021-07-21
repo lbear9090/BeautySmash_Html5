@@ -3,7 +3,8 @@ R3 = 1.732
 var GameScene = {
     game: controller.game,
     isGameStarted: false,
-    isSwitchAble: true,
+    isThrown: false,
+    bObjCreated: false,
     level: 0,
     points: [],
     items: [],
@@ -28,33 +29,84 @@ var GameScene = {
     create: function() {
         var me = this;
         this.isGameStarted = true;
+        this.isThrown = false;
         this.group = this.game.add.group();
 
         // bg
         let bg = newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
         
+        this.pointLayer = this.game.add.group();
+        this.pointLayer.x = CANVAS_WIDTH / 2;
+        this.pointLayer.y = 600;
+
+        this.itemLayer = this.game.add.group();
+
         if (this.game.device.touch)
             this.game.input.mouse.stop();
 
         this.createItems();
+        
+        // this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, 3000).loop(true);
+
+
+        this.card = newSprite(`throw1`, CANVAS_WIDTH/2, 1600, 0.5, 0.5, 0.8, 0.8, 2, this.itemLayer, this.game);
+
+        this.game.input.onUp.add( () => {
+            if(!this.isThrown && this.bObjCreated){
+                this.throwCard();
+            }
+        });
+      
         // sort
         this.sort();
     },
 
     createItems: function() {
-        this.objLayer = this.game.add.group();
-        this.objLayer.position.x = CANVAS_WIDTH / 2;
-        this.objLayer.position.y = 600;
-        
-        let pos = this.mainpos[0];
+        this.bObjCreated = false;
+
+        if(this.points.length > 0){
+            for(i = 0; i < this.items.length; i++){
+                this.items[i].destroy();
+                this.points[i].destroy();
+            }
+            this.items = [];
+            this.points = [];
+        }
+
+        this.itemLayer.alpha = 0;
+
+        this.pointLayer.alpha = 0;
+        this.pointLayer.scale.x = 0.1;
+        this.pointLayer.scale.y = 0.1;
+        this.pointLayer.angle = 0;
+
+        let pos = this.mainpos[Math.floor(Math.random()*5)];
         
         for(i = 0; i < pos.length; i++){
-            this.points[i] = newSprite('point', pos[i][0], pos[i][1], 0.5, 0.5, 1, 1, 1, this.objLayer, this.game);
+            this.points[i] = newSprite('point', pos[i][0], pos[i][1], 0.5, 0.5, 1, 1, 1, this.pointLayer, this.game);
             
-            this.items[i] = newSprite('item1', this.points[i].world.x, this.points[i].world.y, 0.5, 0.5, 1, 1, 1, this.group, this.game);//new Item(1, i, this.points[i].world.x, this.points[i].world.y, 1, this.game);
+            this.items[i] = new Item(Math.ceil(Math.random() * 15), i, this.points[i].x + this.pointLayer.x, this.points[i].y + this.pointLayer.y, 1, this);
         }
+
+        scaleAnim(this.game, this.pointLayer, 1, 1, 500);
+        opacityAnim(this.game, this.pointLayer, 1, 500);
+        rotateAnim(this.game, this.pointLayer, 0, 500, () => {
+            this.bObjCreated = true;
+            this.startRotate();
+            this.itemLayer.alpha = 1;
+        });
     },
     
+    startRotate: function() {
+        console.log("rotate start");
+        this.rotateTween = rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
+            rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
+                if (this.rotateTween)
+                    this.rotateTween.start();
+            });
+        });
+    },
+
     sort: function() {
         this.group.sort('z_order', Phaser.Group.SORT_ASCENDING);
     },
@@ -63,17 +115,53 @@ var GameScene = {
         this.isGameStarted = false;
     },
 
+    throwCard: function(){
+        this.isThrown = true;
+        rotateAnimEase(this.game, this.card, 360, 300);
+        moveAnim(this.game, this.card, CANVAS_WIDTH/2, -100, 300, () => {
+            this.card.y = 1600;
+            this.isThrown = false;
+            this.checkClear();
+        });
+    },
+
+    checkClear: function(){
+        var bCleared = true;
+        for(i = 0; i < this.items.length; i++){
+            if(!this.items[i].choosed){
+                bCleared = false;
+            }
+        }
+
+        if(bCleared){
+            this.bObjCreated = false;
+            
+            this.rotateTween.stop();
+            this.rotateTween = null;
+            this.itemLayer.alpha = 0;
+            this.game.tweens.removeAll();
+            scaleAnim(this.game, this.pointLayer, 0.1, 0.1, 500);
+            opacityAnim(this.game, this.pointLayer, 0, 500);
+            rotateAnim(this.game, this.pointLayer, this.pointLayer.angle + 180, 500, () => {
+                this.createItems();
+            });
+        }
+    },
     onClickReplay: function() {
         window.location.reload();
     },
 
     update: function() {
-        
-        this.objLayer.angle += 1;
-        
-        for(i = 0; i < this.points.length; i++){
-            this.items[i].x = this.points[i].world.x
-            this.items[i].y = this.points[i].world.y
+        if(this.bObjCreated){
+            for(i = 0; i < this.points.length; i++){
+                this.items[i].setPosition(this.points[i].world.x, this.points[i].world.y);
+                if(this.isThrown && !this.items[i].choosed){
+                    if(Phaser.Math.distance(this.items[i].sprite.x, this.items[i].sprite.y, this.card.position.x, this.card.position.y) < 150){
+                        this.items[i].choosed = true;
+                        this.items[i].sprite.visible = false;
+                    }
+                }
+            }
         }
     }
 };

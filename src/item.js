@@ -5,26 +5,24 @@ function Item(type, index, x, y, z, scene) {
     this.scene = scene;
     this.choosed = false;
 
-    let scaleX = 1;
-    let scaleY = 1;
+    let scaleX = 0.8;
+    let scaleY = 0.8;
 
-    this.sprite = newSprite("item"+type, x, y, 0.5, 0.5, scaleX, scaleY, z, this.scene.group, this.scene.game)
+    this.sprite = newSprite("item"+type, x, y, 0.5, 0.5, scaleX, scaleY, z, this.scene.itemLayer, this.scene.game, 0);
     
+    this.rotateTween = rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*180 + 180), Math.random() * 1000 + 2000, () => {
+        rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*180 + 180), Math.random() * 1000 + 2000, () => {
+            if (this.rotateTween)
+                this.rotateTween.start();
+        });
+    });
     return this;
 }
 
 Item.prototype.destroy = function() {
+    this.rotateTween.stop();
+    this.rotateTween = null;
     this.sprite.destroy();
-}
-
-Item.prototype.getPosition = function() {
-    return {row: this.row, floor: this.floor};
-}
-
-Item.prototype.updatePosition = function(row, floor) {
-    this.row = row;
-    this.floor = floor;
-    this.sprite.z_order = floor;
 }
 
 Item.prototype.setPosition = function(x, y) {
