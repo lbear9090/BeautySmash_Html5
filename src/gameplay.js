@@ -4,9 +4,12 @@ var GameScene = {
     game: controller.game,
     isThrown: false,
     bObjCreated: false,
-    level: 0,
+    bGameOver: false,
+    nLevel: 0,
+    nSmallLevel: 0,
     points: [],
     items: [],
+    levelInfo: [],
 
     mainpos: [
         [[-250, -250], [0, -250], [250, -250], [-250, 0], [0, 0], [250, 0], [-250, 250], [0, 250], [250, 250]],
@@ -31,17 +34,21 @@ var GameScene = {
         this.group = this.game.add.group();
 
         // bg
-        let bg = newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
+        newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
         
         this.pointLayer = this.game.add.group();
         this.pointLayer.x = CANVAS_WIDTH / 2;
-        this.pointLayer.y = 600;
+        this.pointLayer.y = 700;
 
         this.itemLayer = this.game.add.group();
         this.itemLayer.alpha = 0;
 
+        this.uiLayer = this.game.add.group();
+
         if (this.game.device.touch)
             this.game.input.mouse.stop();
+
+        this.createLevelInfo(this.nLevel);
 
         this.createItems();
         
@@ -51,9 +58,27 @@ var GameScene = {
             this.throwCard();
         });
       
-        this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.itemLayer, this.game);
+        this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        newSprite(`level_bg`, CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 1, this.uiLayer, this.game);
+        this.lblLabel = newLabel(`Level ` + (this.nLevel+1), 60, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+
+        this.bgMissed = newSprite(`bg_missed`, 0,0,0,0, 1,1,-1, this.uiLayer, this.game);
+        this.sMissed = newSprite(`missed`, CANVAS_WIDTH/2 , 1600 ,0.5,0.5, 1,1,1, this.uiLayer, this.game);
+
+        this.bgMissed.alpha = 0;
+        this.sMissed.alpha = 0;
+
         // sort
         this.sort();
+    },
+
+    createLevelInfo: function(level){
+        this.levelInfo = [];
+        this.nSmallLevel = 0;
+        var lvCount = Math.floor(level/10) + 2;
+        for(i = 0; i < lvCount; i++){
+            this.levelInfo[i] = this.mainpos[Math.floor(Math.random()*5)];
+        }
     },
 
     createItems: function() {
@@ -73,7 +98,7 @@ var GameScene = {
         this.pointLayer.scale.y = 0.1;
         this.pointLayer.angle = 180;
 
-        let pos = this.mainpos[Math.floor(Math.random()*5)];
+        let pos = this.levelInfo[this.nSmallLevel];
         
         for(i = 0; i < pos.length; i++){
             this.points[i] = newSprite('point', pos[i][0], pos[i][1], 0.5, 0.5, 1, 1, 1, this.pointLayer, this.game);
@@ -93,34 +118,50 @@ var GameScene = {
     },
     
     startRotate: function() {
-        // this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, 3000).loop(true);
-
-        this.rotateTween = rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
-            rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), 2000, () => {
-                if (this.rotateTween)
-                    this.rotateTween.start();
+        var rotationTime = Math.max(5000 - this.nLevel * 50, 1000);
+        console.log(rotationTime);
+        if(this.nSmallLevel == 0){
+            this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, rotationTime).loop(true);
+        }else{
+            this.rotateTween = rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), rotationTime, () => {
+                rotateAnimEase(this.game, this.pointLayer, this.pointLayer.angle + ((Math.random() * 100 > 50) ? 1 : -1) * (Math.random()*360 + 180), rotationTime, () => {
+                    if (this.rotateTween)
+                        this.rotateTween.start();
+                });
             });
-        });
+        }
     },
 
     sort: function() {
         this.group.sort('z_order', Phaser.Group.SORT_ASCENDING);
     },
 
-    gameEnd: function(type) {
-
+    gameOver: function() {
+        this.bGameOver = true;
+        this.game.tweens.removeAll();
+        this.bgMissed.alpha = 1;
+        opacityAnim(this.game, this.sMissed, 1, 1000, () => {
+            setTimeout(() => {
+                
+            }, 1000)
+        });
     },
 
     throwCard: function(){
-        if(this.isThrown || !this.bObjCreated || this.checkAllChoose()){
+        if(this.bGameOver || this.isThrown || !this.bObjCreated || this.checkAllChoose()){
             return;
         }
 
+        this.hasScore = false;
         this.isThrown = true;
         rotateAnimEase(this.game, this.card, 360, 300);
         moveAnim(this.game, this.card, CANVAS_WIDTH/2, -100, 300, () => {
-            this.card.y = 1600;
-            this.isThrown = false;
+            if(this.hasScore){
+                this.card.y = 1600;
+                this.isThrown = false;
+            }else{
+                this.gameOver();
+            }
         });
     },
 
@@ -144,10 +185,22 @@ var GameScene = {
             scaleAnim(this.game, this.pointLayer, 0.1, 0.1, 500);
             opacityAnim(this.game, this.pointLayer, 0, 500);
             rotateAnim(this.game, this.pointLayer, this.pointLayer.angle + 180, 500, () => {
-                this.createItems();
+                this.nextLevel();
             });
         }
     },
+
+    nextLevel: function(){
+        if(this.nSmallLevel < this.levelInfo.length-1){
+            this.nSmallLevel++;
+        }else{
+            this.nSmallLevel = 0;
+            this.nLevel++;
+            this.lblLabel.text = "Level " + (this.nLevel + 1);
+            this.createLevelInfo(this.nLevel);
+        }
+        this.createItems();
+    }, 
 
     checkAllChoose: function(){
         var bChoose = true;
@@ -164,7 +217,7 @@ var GameScene = {
     },
 
     update: function() {
-        if(this.bObjCreated){
+        if(this.bObjCreated && !this.bGameOver){
             for(i = 0; i < this.points.length; i++){
                 if(!this.items[i].choosed){
                     this.items[i].setPosition(this.points[i].world.x, this.points[i].world.y);
@@ -172,6 +225,7 @@ var GameScene = {
                         if(Phaser.Math.distance(this.items[i].sprite.x, this.items[i].sprite.y, this.card.position.x, this.card.position.y) < 150){
                             this.items[i].choosed = true;
                             this.items[i].gotoBag(this.bag.position);
+                            this.hasScore = true;
                         }
                     }
                 }                
