@@ -6,6 +6,8 @@ function Item(type, index, x, y, z, scene) {
     this.choosed = false;
     this.goneBag = false;
 
+    this.hasCoin = (Math.random() * 100 > 50);
+
     let scaleX = 0.8;
     let scaleY = 0.8;
 

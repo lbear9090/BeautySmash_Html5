@@ -2,15 +2,9 @@ R2 = 1.4142
 R3 = 1.732
 var GameScene = {
     game: controller.game,
-    isThrown: false,
-    bObjCreated: false,
-    bGameOver: false,
-    nLevel: 0,
-    nSmallLevel: 0,
     points: [],
     items: [],
     levelInfo: [],
-    nTotalScore: 0,
 
     mainpos: [
         [[-250, -250], [0, -250], [250, -250], [-250, 0], [0, 0], [250, 0], [-250, 250], [0, 250], [250, 250]],
@@ -48,17 +42,23 @@ var GameScene = {
 
         if (this.game.device.touch)
             this.game.input.mouse.stop();
+         
+        this.bGameOver = false;
+        this.nTotalScore = 0;
+        this.nSmallLevel = 0,
+        this.isThrown = false;
+        this.bObjCreated = false;
 
         this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
         newSprite(`level_bg`, CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 1, this.uiLayer, this.game);
-        this.lblLabel = newLabel(`Level  ` + (this.nLevel+1), 50, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        this.lblLabel = newLabel(`Level  ` + (g_level+1), 50, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
 
         newSprite(`progress_bg`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 1, 1, 3, this.uiLayer, this.game);
         this.sProgress = newSprite(`progress`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 0, 1, 4, this.uiLayer, this.game);
 
         this.lblScore = newLabel(`0`, 70, 'Arial', '#F32493', 30, 250, 0, 0.5, 1, 1, 3, this.uiLayer, this.game);
 
-        newSprite(`coin`, CANVAS_WIDTH - 30, 250, 1, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        this.sCoin = newSprite(`coin`, CANVAS_WIDTH - 30, 250, 1, 0.5, 1, 1, 3, this.uiLayer, this.game);
         this.lblCoin = newLabel(g_coin, 70, 'Arial', '#F32493', CANVAS_WIDTH - 150, 250, 1, 0.5, 1, 1, 3, this.uiLayer, this.game);
 
         this.bgMissed = newSprite(`bg_missed`, 0,0,0,0, 1,1,-1, this.uiLayer, this.game);
@@ -67,7 +67,7 @@ var GameScene = {
         this.bgMissed.alpha = 0;
         this.sMissed.alpha = 0;
         
-        this.createLevelInfo(this.nLevel);
+        this.createLevelInfo(g_level);
 
         this.createItems();
         
@@ -137,8 +137,7 @@ var GameScene = {
     },
     
     startRotate: function() {
-        var rotationTime = Math.max(4000 - this.nLevel * 50, 1000);
-        console.log(rotationTime);
+        var rotationTime = Math.max(4000 - g_level * 50, 1000);
         if(this.nSmallLevel == 0){
             this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, rotationTime).loop(true);
         }else{
@@ -159,10 +158,11 @@ var GameScene = {
         this.bGameOver = true;
         this.game.tweens.removeAll();
         this.bgMissed.alpha = 1;
+        g_score = this.nTotalScore;
         opacityAnim(this.game, this.sMissed, 1, 1000, () => {
             setTimeout(() => {
-                
-            }, 1000)
+                controller.goToGameOverScene();
+            }, 500)
         });
     },
 
@@ -215,9 +215,16 @@ var GameScene = {
             this.nSmallLevel++;
         }else{
             this.nSmallLevel = 0;
-            this.nLevel++;
-            this.lblLabel.text = "Level  " + (this.nLevel + 1);
-            this.createLevelInfo(this.nLevel);
+            g_level++;
+            this.lblLabel.text = "Level  " + (g_level + 1);
+
+            let bonusCoin = Math.ceil(Math.random() * 3) + 7;
+            for(i = 0; i < bonusCoin; i++){
+                setTimeout(() => {
+                    this.addCoin(this.bag.x, this.bag.y);
+                }, 50*i);
+            }
+            this.createLevelInfo(g_level);
         }
         this.createItems();
     }, 
@@ -236,6 +243,23 @@ var GameScene = {
         window.location.reload();
     },
 
+    presentTempLabel: function(text, x, y, color){
+        var lScore = newLabel(text, 50, "Arial", color, x, y, 0.5, 0.5, 1, 1, 3, this.itemLayer, this.game);
+        opacityAnim(this.game, lScore, 0, 500);
+        moveAnim(this.game, lScore, x, y - 100, 500, ()=>{
+            lScore.destroy();
+        });
+    },
+
+    addCoin: function(x, y){
+        var coin = newSprite('coin', x, y, 0.5, 0.5, 0.5, 0.5, 3, this.uiLayer, this.game);
+        moveAnim(this.game, coin, this.sCoin.x, this.sCoin.y, 400 + Math.random() * 100, () => {
+            g_coin++;
+            this.lblCoin.text = g_coin;
+            coin.destroy();
+        });
+    },
+
     update: function() {
         if(this.bObjCreated && !this.bGameOver){
             for(i = 0; i < this.points.length; i++){
@@ -249,9 +273,14 @@ var GameScene = {
 
                             this.nCombo++;
                             score = Math.pow(2, this.nCombo-1);
+                            
+                            this.presentTempLabel("+ " + score, this.items[i].sprite.x, this.items[i].sprite.y, "#F32493");
                             this.nTotalScore += score;
                             this.lblScore.text = this.nTotalScore
 
+                            if(this.items[i].hasCoin){
+                                this.addCoin(this.items[i].sprite.x, this.items[i].sprite.y);
+                            }
                             this.nCollectedCnt++;
                             this.setProgress();
                         }

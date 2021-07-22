@@ -5,6 +5,7 @@ controller.createGame = function() {
     this.game.state.add('PreloadScene', PreloadScene);
     this.game.state.add('MainScene', MainScene);
     this.game.state.add('GameScene', GameScene);
+    this.game.state.add('GameOverScene', GameOverScene);
 
     this.goToPreloadScene();
     sizeHandler();
@@ -17,3 +18,4 @@ controller.goToScene = function(sceneName) {
 controller.goToPreloadScene = function() { this.goToScene('PreloadScene'); };
 controller.goToMainScene = function() { this.goToScene('MainScene'); };
 controller.goToGameScene = function() { this.goToScene('GameScene'); };
+controller.goToGameOverScene = function() { this.goToScene('GameOverScene'); };

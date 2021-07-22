@@ -46,6 +46,8 @@ var PreloadScene = {
 
         this.loadImage("score_bg",		`${IMG_PATH}/score_bg.png`);
         this.loadImage("bg_gameover",	`${IMG_PATH}/bg_gameover.jpg`);
+        this.loadImage("btn_replay",	`${IMG_PATH}/btn_replay.png`);
+        this.loadImage("btn_shop1",		`${IMG_PATH}/btn_shop1.png`);
 
         this.loadImage("point",			`${IMG_PATH}/point.png`);
         this.loadImage("item1",			`${IMG_PATH}/items/item_1.png`);
