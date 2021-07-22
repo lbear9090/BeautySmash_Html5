@@ -10,6 +10,8 @@ var GameScene = {
     points: [],
     items: [],
     levelInfo: [],
+    nTotalItemCnt: 0,
+    nCollectedCnt: 0,
 
     mainpos: [
         [[-250, -250], [0, -250], [250, -250], [-250, 0], [0, 0], [250, 0], [-250, 250], [0, 250], [250, 250]],
@@ -48,6 +50,19 @@ var GameScene = {
         if (this.game.device.touch)
             this.game.input.mouse.stop();
 
+        this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        newSprite(`level_bg`, CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 1, this.uiLayer, this.game);
+        this.lblLabel = newLabel(`Level ` + (this.nLevel+1), 60, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+
+        newSprite(`progress_bg`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        this.sProgress = newSprite(`progress`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 0, 1, 4, this.uiLayer, this.game);
+
+        this.bgMissed = newSprite(`bg_missed`, 0,0,0,0, 1,1,-1, this.uiLayer, this.game);
+        this.sMissed = newSprite(`missed`, CANVAS_WIDTH/2 , 1600 ,0.5,0.5, 1,1,1, this.uiLayer, this.game);
+
+        this.bgMissed.alpha = 0;
+        this.sMissed.alpha = 0;
+
         this.createLevelInfo(this.nLevel);
 
         this.createItems();
@@ -58,16 +73,6 @@ var GameScene = {
             this.throwCard();
         });
       
-        this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
-        newSprite(`level_bg`, CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 1, this.uiLayer, this.game);
-        this.lblLabel = newLabel(`Level ` + (this.nLevel+1), 60, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
-
-        this.bgMissed = newSprite(`bg_missed`, 0,0,0,0, 1,1,-1, this.uiLayer, this.game);
-        this.sMissed = newSprite(`missed`, CANVAS_WIDTH/2 , 1600 ,0.5,0.5, 1,1,1, this.uiLayer, this.game);
-
-        this.bgMissed.alpha = 0;
-        this.sMissed.alpha = 0;
-
         // sort
         this.sort();
     },
@@ -75,10 +80,19 @@ var GameScene = {
     createLevelInfo: function(level){
         this.levelInfo = [];
         this.nSmallLevel = 0;
+        this.nTotalItemCnt = 0;
+        this.nCollectedCnt = 0;
         var lvCount = Math.floor(level/10) + 2;
         for(i = 0; i < lvCount; i++){
             this.levelInfo[i] = this.mainpos[Math.floor(Math.random()*5)];
+            this.nTotalItemCnt += this.levelInfo[i].length;
         }
+        
+        this.setProgress();
+    },
+
+    setProgress: function(){
+        this.sProgress.scale.x = this.nCollectedCnt / this.nTotalItemCnt;
     },
 
     createItems: function() {
@@ -226,6 +240,8 @@ var GameScene = {
                             this.items[i].choosed = true;
                             this.items[i].gotoBag(this.bag.position);
                             this.hasScore = true;
+                            this.nCollectedCnt++;
+                            this.setProgress();
                         }
                     }
                 }                
