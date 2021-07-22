@@ -3,6 +3,7 @@ const CANVAS_HEIGHT = 1920;
 
 var s_aSounds;
 var s_bIsIphone = false;
+var g_coin = 0;
 
 var rotateAnimEase = function(game, sprite, value, duration, callback = undefined) {
     let tween = game.add.tween(sprite).to({angle: value}, duration, Phaser.Easing.Quadratic.InOut, true);

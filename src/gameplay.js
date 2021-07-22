@@ -10,8 +10,7 @@ var GameScene = {
     points: [],
     items: [],
     levelInfo: [],
-    nTotalItemCnt: 0,
-    nCollectedCnt: 0,
+    nTotalScore: 0,
 
     mainpos: [
         [[-250, -250], [0, -250], [250, -250], [-250, 0], [0, 0], [250, 0], [-250, 250], [0, 250], [250, 250]],
@@ -52,17 +51,22 @@ var GameScene = {
 
         this.bag = newSprite(`bag`, 200, 1700, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
         newSprite(`level_bg`, CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 1, this.uiLayer, this.game);
-        this.lblLabel = newLabel(`Level ` + (this.nLevel+1), 60, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        this.lblLabel = newLabel(`Level  ` + (this.nLevel+1), 50, 'Arial', '#FFFFFF', CANVAS_WIDTH/2, 80, 0.5, 0.5, 1, 1, 3, this.uiLayer, this.game);
 
         newSprite(`progress_bg`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 1, 1, 3, this.uiLayer, this.game);
         this.sProgress = newSprite(`progress`, CANVAS_WIDTH / 2 - 368 / 2, 160, 0, 0.5, 0, 1, 4, this.uiLayer, this.game);
+
+        this.lblScore = newLabel(`0`, 70, 'Arial', '#F32493', 30, 250, 0, 0.5, 1, 1, 3, this.uiLayer, this.game);
+
+        newSprite(`coin`, CANVAS_WIDTH - 30, 250, 1, 0.5, 1, 1, 3, this.uiLayer, this.game);
+        this.lblCoin = newLabel(g_coin, 70, 'Arial', '#F32493', CANVAS_WIDTH - 150, 250, 1, 0.5, 1, 1, 3, this.uiLayer, this.game);
 
         this.bgMissed = newSprite(`bg_missed`, 0,0,0,0, 1,1,-1, this.uiLayer, this.game);
         this.sMissed = newSprite(`missed`, CANVAS_WIDTH/2 , 1600 ,0.5,0.5, 1,1,1, this.uiLayer, this.game);
 
         this.bgMissed.alpha = 0;
         this.sMissed.alpha = 0;
-
+        
         this.createLevelInfo(this.nLevel);
 
         this.createItems();
@@ -133,7 +137,7 @@ var GameScene = {
     },
     
     startRotate: function() {
-        var rotationTime = Math.max(5000 - this.nLevel * 50, 1000);
+        var rotationTime = Math.max(4000 - this.nLevel * 50, 1000);
         console.log(rotationTime);
         if(this.nSmallLevel == 0){
             this.rotateTween = rotateAnim(this.game, this.pointLayer, ((Math.random() * 100 > 50) ? 1 : -1) * 360, rotationTime).loop(true);
@@ -166,6 +170,7 @@ var GameScene = {
         if(this.bGameOver || this.isThrown || !this.bObjCreated || this.checkAllChoose()){
             return;
         }
+        this.nCombo = 0;
 
         this.hasScore = false;
         this.isThrown = true;
@@ -211,7 +216,7 @@ var GameScene = {
         }else{
             this.nSmallLevel = 0;
             this.nLevel++;
-            this.lblLabel.text = "Level " + (this.nLevel + 1);
+            this.lblLabel.text = "Level  " + (this.nLevel + 1);
             this.createLevelInfo(this.nLevel);
         }
         this.createItems();
@@ -241,6 +246,12 @@ var GameScene = {
                             this.items[i].choosed = true;
                             this.items[i].gotoBag(this.bag.position);
                             this.hasScore = true;
+
+                            this.nCombo++;
+                            score = Math.pow(2, this.nCombo-1);
+                            this.nTotalScore += score;
+                            this.lblScore.text = this.nTotalScore
+
                             this.nCollectedCnt++;
                             this.setProgress();
                         }
