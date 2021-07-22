@@ -92,7 +92,8 @@ var GameScene = {
     },
 
     setProgress: function(){
-        this.sProgress.scale.x = this.nCollectedCnt / this.nTotalItemCnt;
+        scaleAnim(this.game, this.sProgress, this.nCollectedCnt / this.nTotalItemCnt, 1, 200);
+        // this.sProgress.scale.x = this.nCollectedCnt / this.nTotalItemCnt;
     },
 
     createItems: function() {

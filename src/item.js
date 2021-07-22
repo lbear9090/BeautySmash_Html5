@@ -11,8 +11,8 @@ function Item(type, index, x, y, z, scene) {
 
     this.sprite = newSprite("item"+type, x, y, 0.5, 0.5, scaleX, scaleY, z, this.scene.itemLayer, this.scene.game, 0);
     
-    this.rotateTween = rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*180 + 180), Math.random() * 1000 + 2000, () => {
-        rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*180 + 180), Math.random() * 1000 + 2000, () => {
+    this.rotateTween = rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*360 + 360), Math.random() * 1000 + 1000, () => {
+        rotateAnimEase(this.scene.game, this.sprite, this.sprite.angle + (Math.random() * 100 > 50 ? 1 : -1) * (Math.random()*360 + 360), Math.random() * 1000 + 1000, () => {
             if (this.rotateTween)
                 this.rotateTween.start();
         });
