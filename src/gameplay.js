@@ -2,7 +2,6 @@ R2 = 1.4142
 R3 = 1.732
 var GameScene = {
     game: controller.game,
-    isGameStarted: false,
     isThrown: false,
     bObjCreated: false,
     level: 0,
@@ -28,7 +27,6 @@ var GameScene = {
 
     create: function() {
         var me = this;
-        this.isGameStarted = true;
         this.isThrown = false;
         this.group = this.game.add.group();
 
@@ -47,7 +45,7 @@ var GameScene = {
 
         this.createItems();
         
-        this.card = newSprite(`throw1`, CANVAS_WIDTH/2, 1600, 0.5, 0.5, 0.8, 0.8, 2, this.itemLayer, this.game);
+        this.card = newSprite(`throw1`, CANVAS_WIDTH/2, 1600, 0.5, 0.5, 0.7, 0.7, 2, this.itemLayer, this.game);
 
         this.game.input.onUp.add( () => {
             this.throwCard();
@@ -110,7 +108,7 @@ var GameScene = {
     },
 
     gameEnd: function(type) {
-        this.isGameStarted = false;
+
     },
 
     throwCard: function(){
