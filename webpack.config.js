@@ -97,10 +97,10 @@ module.exports = {
                 filesToConcat: [
                     path.resolve(__dirname, 'src/controller.js'),
                     path.resolve(__dirname, 'src/global.js'),
-                    path.resolve(__dirname, 'src/checker.js'),
-                    path.resolve(__dirname, 'src/dice.js'),
-                    path.resolve(__dirname, 'src/placeholder.js'),
-                    path.resolve(__dirname, 'src/gameplay.js'),
+                    path.resolve(__dirname, 'src/item.js'),
+                    path.resolve(__dirname, 'src/mainscene.js'),
+                    path.resolve(__dirname, 'src/gamescene.js'),
+                    path.resolve(__dirname, 'src/gameoverscene.js'),
                     path.resolve(__dirname, 'src/preload.js')
                 ]
             }

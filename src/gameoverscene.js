@@ -28,7 +28,7 @@ var GameOverScene = {
         // sort
 
         newButton("btn_replay", 540 - 200, 1600, 0.5, 0.5, 1, 1, 3, this.onClickReplay, this, this.group, this.game);
-        newButton("btn_shop1", 540 + 200, 1600, 0.5, 0.5, 1, 1, 3, this.onClickShop, this, this.group, this.game);
+        // newButton("btn_shop1", 540 + 200, 1600, 0.5, 0.5, 1, 1, 3, this.onClickShop, this, this.group, this.game);
         this.sort();
     },
     
