@@ -19,6 +19,7 @@ var GameOverScene = {
 
         // bg
         newSprite(`bg_gameover`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
+        newSprite(`logo`, 320, 390, 0.5, 0.5, 1, 1, 1, this.group, this.game);
 
         if (this.game.device.touch)
             this.game.input.mouse.stop();

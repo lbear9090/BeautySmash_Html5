@@ -33,6 +33,7 @@ var PreloadScene = {
         const SOUND_PATH = "./resources/sounds";
 
         this.loadImage("bg",			`${IMG_PATH}/bg.jpg`);
+        this.loadImage("logo",			`${IMG_PATH}/logo.png`);
         this.loadImage("btn_play",		`${IMG_PATH}/btn_play.png`);
         this.loadImage("gamii_logo",	`${IMG_PATH}/gamii_logo.png`);
         this.loadImage("title",			`${IMG_PATH}/title.png`);

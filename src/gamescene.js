@@ -30,7 +30,7 @@ var GameScene = {
 
         // bg
         newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
-        
+        newSprite(`logo`, 320, 390, 0.5, 0.5, 1, 1, 1, this.group, this.game);
         this.pointLayer = this.game.add.group();
         this.pointLayer.x = CANVAS_WIDTH / 2;
         this.pointLayer.y = 700;

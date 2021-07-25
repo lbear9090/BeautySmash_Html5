@@ -19,6 +19,7 @@ var MainScene = {
 
         // bg
         newSprite(`bg`, 0, 0, 0, 0, 1, 1, -1, this.group, this.game);
+        newSprite(`logo`, 320, 390, 0.5, 0.5, 1, 1, 1, this.group, this.game);
         newSprite(`title`, CANVAS_WIDTH / 2, 480, 0.5, 0, 1, 1, -1, this.group, this.game);
         newSprite(`gamii_logo`, CANVAS_WIDTH / 2, 1600, 0.5, 0, 1, 1, -1, this.group, this.game);
         this.btnPlay = newButton("btn_play", CANVAS_WIDTH / 2, 1200, 0.5, 0, 1, 1, 200, this.onClickPlay, this, this.group, this.game);
